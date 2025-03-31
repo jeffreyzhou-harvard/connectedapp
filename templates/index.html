@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="event_type" class="form-label">Event Type</label>
+                            <select name="event_type" id="event_type" class="form-select">
+                                <option value="all" {% if request.args.get('event_type') == 'all' %}selected{% endif %}>All Types</option>
+                                <option value="social" {% if request.args.get('event_type') == 'social' %}selected{% endif %}>Social</option>
+                                <option value="sports" {% if request.args.get('event_type') == 'sports' %}selected{% endif %}>Sports</option>
+                                <option value="academic" {% if request.args.get('event_type') == 'academic' %}selected{% endif %}>Academic</option>
+                                <option value="other" {% if request.args.get('event_type') == 'other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="friends_count" class="form-label">Minimum Friends</label>
+                            <select name="friends_count" id="friends_count" class="form-select">
+                                <option value="all" {% if request.args.get('friends_count') == 'all' %}selected{% endif %}>Any</option>
+                                <option value="5" {% if request.args.get('friends_count') == '5' %}selected{% endif %}>5+</option>
+                                <option value="10" {% if request.args.get('friends_count') == '10' %}selected{% endif %}>10+</option>
+                                <option value="20" {% if request.args.get('friends_count') == '20' %}selected{% endif %}>20+</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="row">
+        {% for event in events %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text">{{ event.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">{{ event.event_type }}</span>
+                        <small class="text-muted">{{ event.friends_count }} friends</small>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">Posted by {{ event.author.name }}</small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">{{ event.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        {% if current_user.is_authenticated and current_user.id == event.user_id %}
+                        <div>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No events found. {% if current_user.is_authenticated %}<a href="{{ url_for('add_event') }}">Create one!</a>{% else %}<a href="{{ url_for('login') }}">Login</a> to create an event.{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
