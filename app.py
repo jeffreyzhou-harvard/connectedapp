@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
+from flask_migrate import Migrate
 from wtforms import StringField, PasswordField, TextAreaField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 from dotenv import load_dotenv
@@ -20,6 +21,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Extensions
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -62,9 +64,9 @@ class Event(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     event_type = db.Column(db.String(20), nullable=False)
-    friends_count = db.Column(db.Integer, default=0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    friends_count = db.Column(db.Integer, default=0)  # Number of friends attending
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -75,17 +77,16 @@ def load_user(user_id):
 def index():
     event_type = request.args.get('event_type', 'all')
     friends_count = request.args.get('friends_count', 'all')
-
+    
     query = Event.query
-
+    
     if event_type != 'all':
         query = query.filter_by(event_type=event_type)
+    
     if friends_count != 'all':
-        try:
-            query = query.filter(Event.friends_count >= int(friends_count))
-        except ValueError:
-            pass
-
+        # This is a placeholder - we'll implement actual friends count later
+        query = query.filter(Event.friends_count >= int(friends_count))
+    
     events = query.order_by(Event.created_at.desc()).all()
     return render_template('index.html', events=events)
 
@@ -151,6 +152,11 @@ def add_event():
         flash('Event added successfully!', 'success')
         return redirect(url_for('index'))
     return render_template('add_event.html', form=form)
+
+@app.route('/friends')
+@login_required
+def friends():
+    return render_template('friends.html')
 
 # Error handlers
 @app.errorhandler(404)

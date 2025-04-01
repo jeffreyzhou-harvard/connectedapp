@@ -1,28 +1,27 @@
-{% extends "layout.html" %}
-
-{% block title %}Profile{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
-<h2>Your Profile</h2>
-<p><strong>Name:</strong> {{ user.name }}</p>
-<p><strong>Email:</strong> {{ user.email }}</p>
-
-<h3>Edit Profile</h3>
-<form method="POST" action="{{ url_for('profile') }}">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" class="form-control" value="{{ user.name }}" required>
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" required>
-
-    <!-- Optionally handle user interests -->
-    <label for="interests">Interests:</label>
-    <select id="interests" name="interests" class="form-control" multiple>
-        <option value="club">Club Meetings</option>
-        <option value="mixer">Mixers</option>
-        <option value="speaker">Speaker Events</option>
-    </select>
-
-    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-</form>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Profile</h2>
+                    <div class="mb-3">
+                        <strong>Name:</strong> {{ user.name }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Email:</strong> {{ user.email }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Member since:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}
+                    </div>
+                    <div class="mt-4">
+                        <a href="{{ url_for('friends') }}" class="btn btn-primary">View Friends</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

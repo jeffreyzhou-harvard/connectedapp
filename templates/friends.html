@@ -1,30 +1,16 @@
-{% extends "layout.html" %}
-
-{% block title %}Friends{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
-<h1>Your Friends</h1>
-
-<section id="friends-list-section">
-    <h2>Friends List</h2>
-    <ul id="friends-list">
-        {% for friend in friends %}
-        <li>{{ friend.name }}</li>
-        {% endfor %}
-    </ul>
-</section>
-
-<section id="friends-events-section">
-    <h2>Events Your Friends Are Attending</h2>
-    <div id="friends-events-list">
-        {% for event in events %}
-        <div class="event">
-            <h3>{{ event.title }}</h3>
-            <p>{{ event.description }}</p>
-            <p><strong>Type:</strong> {{ event.event_type }}</p>
-            <p><strong>Friends Going:</strong> {{ event.friends_count }}</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Your Friends</h2>
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted">Friend list coming soon!</p>
+                </div>
+            </div>
         </div>
-        {% endfor %}
     </div>
-</section>
+</div>
 {% endblock %}
